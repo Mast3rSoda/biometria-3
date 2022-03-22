@@ -5,8 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:biometria_3"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="Biometria3" Height="450" Width="800">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Click="OpenFile" />
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Image Name="ReadyImage" Grid.Column="0" Grid.Row="0" Margin="5" Stretch="Fill"></Image>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Image Name="OriginalImage" Grid.Row="0" Margin="3" Stretch="Fill"></Image>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Row="0" Grid.Column="0" Name="Niblack" Content="Niblack" Click="Niblack_Click" Margin="3"/>
+                    <Button Grid.Row="0" Grid.Column="1" Name="Sauvola" Content="Sauvola" Click="Sauvola_Click" Margin="3"/>
+                    <Button Grid.Row="1" Grid.Column="0" Name="Phansalkar" Content="Phansalkar" Click="Phansalkar_Click" Margin="3"/>
+                    <Button Grid.Row="1" Grid.Column="1" Name="Kapur" Content="Kapur" Click="Kapur_Click" Margin="3"/>
+                    <Button Grid.Row="2" Grid.Column="0" Name="LuWu" Content="LuWu" Click="LuWu_Click" Margin="3"/>
+                    <Button Grid.Row="2" Grid.Column="1" Name="Bernsen" Content="Bernsen" Click="Bernsen_Click" Margin="3"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window>
