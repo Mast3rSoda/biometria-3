@@ -13,70 +13,113 @@ namespace biometria_3
     {
         public static Bitmap Bernsen(Bitmap bmp, int range, int limit)
         {
-            byte[,] data = ImageTo2DByteArray(bmp);
-            byte[,] data2 = new byte[bmp.Height, bmp.Width];
-            byte[,] data3 = new byte[bmp.Height, bmp.Width];
+            byte[,] grayImage = ImageTo2DByteArray(bmp);
 
-            for (int y = 0; y < bmp.Height; ++y)
-                for (int x = 0; x < bmp.Width; ++x)
+            for (int i = 0; i < grayImage.GetLength(0); i++)
+            {
+                for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
-                    int min = 255, max = 0;
-                    for (int z = y - range; z <= y + range; ++z)
+                    byte[,] localArray;
+                    if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
+                        localArray = new byte[5, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    else if (i < 2 && j < 2)
                     {
-                        if (z >= 0 && z < bmp.Height)
-                            for (int i = x - range; i <= x + range; ++i)
-                            {
-                                if (i >= 0 && i < bmp.Width)
-                                {
-                                    if(data[z,i] > max)
-                                        max = data[z,i];
-                                    if(data[z,i] < min)
-                                        min = data[z,i];
-                                }
-                            }
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     {  grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     {  grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
                     }
-                    data2[y, x] = (byte)((max + min) / 2);
-                    //liczymy contrast measure, ale na chuj???
-                    data3[y, x] = (byte)((max - min));
-                }
-
-
-
-
-
-
-            //maybe will work on that later as it's not working
-            //unsafe
-            //{
-            //    BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-            //    int bytesPerPixel = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
-            //    int heightInPixels = bitmapData.Height;
-            //    int widthInBytes = bitmapData.Width * bytesPerPixel;
-            //    byte* PtrFirstPixel = (byte*)bitmapData.Scan0;
-
-            //    Parallel.For(0, heightInPixels, y =>
-            //    {
-            //        byte* currentLine = PtrFirstPixel + (y * bitmapData.Stride);
-            //        for (int x = 0; x < widthInBytes; x += bytesPerPixel)
-            //        {
-            //            currentLine[x] = 
-            //            currentLine[x + 1] = 
-            //            currentLine[x + 2] = data[y,x];
-            //        }
-            //    });
-            //    bmp.UnlockBits(bitmapData);
-            //}
-
-            //no idea how to use it
-            for (int y = 0; y < bmp.Height; ++y)
-                for (int x = 0; x < bmp.Width; ++x)
-                {
-                    if(data3[y,x] < limit)
-                        data2[y, x] = 0;
+                    else if (i >= grayImage.GetLength(0) - 3 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     {  grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    else if (i < 2 && j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3 && i >= grayImage.GetLength(0) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j]},
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j]},
+                    };
+                    }
+                    else if (j < 2 && i > 1)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (i < 2 && j > 1 && j <= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
                     else
-                        data2[y, x] = 255;
-                    bmp.SetPixel(x, y, Color.FromArgb(data2[y, x], data2[y, x], data2[y, x]));
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    // ja pierdolę
+                    IEnumerable<byte> allValues = localArray.Cast<byte>();
+                    int min = (int)allValues.Min();
+                    int max = (int)allValues.Max();
+                    int mean = (max + min) / 2;
+                    int contrast = max - min;
+                    var current = (int)grayImage[i, j];
+                    if (contrast < limit)
+                    {
+                        if (mean >= 128)
+                            bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                        else bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+
+                    }
+                    else
+                    {
+                        if (current >= mean)
+                            bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                        else bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                    }
                 }
+
+            }
+
             return bmp;
         }
 
@@ -104,6 +147,561 @@ namespace biometria_3
                     result[y, x] = (byte)((bytes[offset + 0] + bytes[offset + 1] + bytes[offset + 2]) / 3);
                 }
             return result;
+        }
+
+        public static Bitmap Niblack(Bitmap bmp, double k = 0.1)
+        {
+
+            byte[,] grayImage = ImageTo2DByteArray(bmp);
+
+            for (int i = 0; i < grayImage.GetLength(0); i++)
+            {
+                for (int j = 0; j < grayImage.GetLength(1); j++)
+                {
+                    byte[,] localArray;
+                    if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
+                        localArray = new byte[5, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    else if (i < 2 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     {  grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     {  grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (i >= grayImage.GetLength(0) - 3 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     {  grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    else if (i < 2 && j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3 && i >= grayImage.GetLength(0) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j]},
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j]},
+                    };
+                    }
+                    else if (j < 2 && i > 1)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (i < 2 && j > 1 && j <= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    // ja pierdolę
+                    IEnumerable<byte> allValues = localArray.Cast<byte>();
+                    int min = (int)allValues.Min();
+                    int max = (int)allValues.Max();
+                    int mean = (max + min) / 2;
+                    double standardDeviation = Math.Sqrt((Math.Pow((double)(grayImage[i, j] - mean), 2) + Math.Pow((double)(min - mean), 2) + Math.Pow((double)(max - mean), 2)) / 2);
+                    var current = (int)grayImage[i, j];
+                    if (current < mean - k * standardDeviation)
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                    }
+                    else
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                    }
+                }
+
+            }
+
+
+
+            return bmp;
+        }
+
+        public static Bitmap MidGrey(Bitmap bmp)
+        {
+
+            byte[,] grayImage = ImageTo2DByteArray(bmp);
+
+            for (int i = 0; i < grayImage.GetLength(0); i++)
+            {
+                for (int j = 0; j < grayImage.GetLength(1); j++)
+                {
+                    byte[,] localArray;
+                    if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
+                        localArray = new byte[5, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    else if (i < 2 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     {  grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     {  grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (i >= grayImage.GetLength(0) - 3 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     {  grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    else if (i < 2 && j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3 && i >= grayImage.GetLength(0) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j]},
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j]},
+                    };
+                    }
+                    else if (j < 2 && i > 1)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (i < 2 && j > 1 && j <= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    // ja pierdolę
+                    IEnumerable<byte> allValues = localArray.Cast<byte>();
+                    int min = (int)allValues.Min();
+                    int max = (int)allValues.Max();
+                    int mean = (max + min) / 2;
+                    var current = (int)grayImage[i, j];
+                    if (current < mean)
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                    }
+                    else
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                    }
+                }
+
+            }
+
+
+
+            return bmp;
+        }
+
+        public static Bitmap Median(Bitmap bmp)
+        {
+
+            byte[,] grayImage = ImageTo2DByteArray(bmp);
+
+            for (int i = 0; i < grayImage.GetLength(0); i++)
+            {
+                for (int j = 0; j < grayImage.GetLength(1); j++)
+                {
+                    byte[,] localArray;
+                    if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
+                        localArray = new byte[5, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    else if (i < 2 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     {  grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     {  grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (i >= grayImage.GetLength(0) - 3 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     {  grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    else if (i < 2 && j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3 && i >= grayImage.GetLength(0) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j]},
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j]},
+                    };
+                    }
+                    else if (j < 2 && i > 1)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (i < 2 && j > 1 && j <= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    // ja pierdolę
+                    IEnumerable<byte> allValues = localArray.Cast<byte>();
+                    var vals = allValues.ToList();
+                    vals.Sort();
+                    int median = vals.Count() % 2 == 0 ? (int)(vals[vals.Count / 2] + vals[vals.Count / 2 + 1]) / 2 : (int)vals[vals.Count / 2];
+                    var current = (int)grayImage[i, j];
+                    if (current < median)
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                    }
+                    else
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                    }
+                }
+
+            }
+
+
+
+            return bmp;
+        }
+        //k -> const do zmiany, R -> dynamic range (od ilości bitów zależy)
+        public static Bitmap Sauvola(Bitmap bmp, double k = 0.5)
+        {
+            const int R = 8;
+
+            byte[,] grayImage = ImageTo2DByteArray(bmp);
+
+            for (int i = 0; i < grayImage.GetLength(0); i++)
+            {
+                for (int j = 0; j < grayImage.GetLength(1); j++)
+                {
+                    byte[,] localArray;
+                    if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
+                        localArray = new byte[5, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    else if (i < 2 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     {  grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     {  grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (i >= grayImage.GetLength(0) - 3 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     {  grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    else if (i < 2 && j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3 && i >= grayImage.GetLength(0) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j]},
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j]},
+                    };
+                    }
+                    else if (j < 2 && i > 1)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (i < 2 && j > 1 && j <= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    // ja pierdolę
+                    IEnumerable<byte> allValues = localArray.Cast<byte>();
+                    int min = (int)allValues.Min();
+                    int max = (int)allValues.Max();
+                    int mean = (max + min) / 2;
+                    double standardDeviation = Math.Sqrt((Math.Pow((double)(grayImage[i, j] - mean), 2) + Math.Pow((double)(min - mean), 2) + Math.Pow((double)(max - mean), 2)) / 2);
+
+                    var current = (int)grayImage[i, j];
+
+                    if (current > mean * (1 + k * standardDeviation / R - 1))
+                        bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                    else
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                    }
+                }
+
+            }
+
+
+
+            return bmp;
+        }
+        //tu lepiej k zostawić na 0
+        public static Bitmap Phansalkar(Bitmap bmp, double k = 0)
+        {
+            const double R = 0.5;
+
+            byte[,] grayImage = ImageTo2DByteArray(bmp);
+
+            for (int i = 0; i < grayImage.GetLength(0); i++)
+            {
+                for (int j = 0; j < grayImage.GetLength(1); j++)
+                {
+                    byte[,] localArray;
+                    if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
+                        localArray = new byte[5, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    else if (i < 2 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     {  grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     {  grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (i >= grayImage.GetLength(0) - 3 && j < 2)
+                    {
+                        localArray = new byte[3, 3] {
+                     {  grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     {  grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     {  grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    else if (i < 2 && j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3 && i >= grayImage.GetLength(0) - 3)
+                    {
+                        localArray = new byte[3, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j]},
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j]},
+                    };
+                    }
+                    else if (j < 2 && i > 1)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else if (j >= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[5, 3] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j] }
+                    };
+                    }
+                    else if (i < 2 && j > 1 && j <= grayImage.GetLength(1) - 3)
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                     { grayImage[i + 1, j - 2], grayImage[i + 1, j - 1], grayImage[i + 1, j], grayImage[i + 1, j + 1], grayImage[i + 1, j + 2] },
+                     { grayImage[i + 2, j - 2], grayImage[i + 2, j - 1], grayImage[i + 2, j], grayImage[i + 2, j + 1], grayImage[i + 2, j + 2] }
+                    };
+                    }
+                    else
+                    {
+                        localArray = new byte[3, 5] {
+                     { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
+                     { grayImage[i - 1, j - 2], grayImage[i - 1, j - 1], grayImage[i - 1, j], grayImage[i - 1, j + 1], grayImage[i - 1, j+ 2] },
+                     { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
+                    };
+                    }
+                    // ja pierdolę
+                    IEnumerable<byte> allValues = localArray.Cast<byte>();
+                    int min = (int)allValues.Min();
+                    int max = (int)allValues.Max();
+                    int mean = (max + min) / 2;
+                    double standardDeviation = Math.Sqrt((Math.Pow((double)(grayImage[i, j] - mean), 2) + Math.Pow((double)(min - mean), 2) + Math.Pow((double)(max - mean), 2)) / 2);
+
+                    var current = (int)grayImage[i, j];
+                    //t = mean * (1 + p * exp(-q * mean) + k * ((stdev / r) - 1))
+                    //p -> jak bardzo ma klasyfikować bg na fg gdy jest <1 algorytm zachowuje się jak Sauvola
+                    //q -> również sprawia, że zachowuje się jak Sauvola
+                    double q = 10;
+                    double p = 3;
+                    double t = mean * (1 + p * Math.Exp(-q * mean) + k * ((standardDeviation / R) - 1));
+                    if (current > t)
+                        bmp.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                    else
+                    {
+                        bmp.SetPixel(j, i, Color.FromArgb(255, 255, 255));
+                    }
+                }
+
+            }
+
+
+
+            return bmp;
         }
     }
 }

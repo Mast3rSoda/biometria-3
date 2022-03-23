@@ -58,27 +58,63 @@ namespace biometria_3
 
         private void Niblack_Click(object sender, RoutedEventArgs e)
         {
-
+            if (sourceImage == null)
+            {
+                MessageBox.Show("You haven't uploaded any files", "Image error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            Bitmap bitmap = new Bitmap(this.sourceImage.Width, this.sourceImage.Height);
+            bitmap = (Bitmap)this.imageToEdit.Clone();
+            ReadyImage.Source = ImageSourceFromBitmap(Algorithm.Niblack(bitmap, Range.Value/10-1));
         }
 
         private void Sauvola_Click(object sender, RoutedEventArgs e)
         {
-
+            if (sourceImage == null)
+            {
+                MessageBox.Show("You haven't uploaded any files", "Image error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            Bitmap bitmap = new Bitmap(this.sourceImage.Width, this.sourceImage.Height);
+            bitmap = (Bitmap)this.imageToEdit.Clone();
+            ReadyImage.Source = ImageSourceFromBitmap(Algorithm.Sauvola(bitmap, Range.Value / 10 - 1));
         }
 
         private void Phansalkar_Click(object sender, RoutedEventArgs e)
         {
-
+            if (sourceImage == null)
+            {
+                MessageBox.Show("You haven't uploaded any files", "Image error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            Bitmap bitmap = new Bitmap(this.sourceImage.Width, this.sourceImage.Height);
+            bitmap = (Bitmap)this.imageToEdit.Clone();
+            ReadyImage.Source = ImageSourceFromBitmap(Algorithm.Phansalkar(bitmap, Range.Value / 10 - 1));
         }
 
         private void Kapur_Click(object sender, RoutedEventArgs e)
         {
-
+            //Brak mi wiedzy na rekursję
+            if (sourceImage == null)
+            {
+                MessageBox.Show("You haven't uploaded any files", "Image error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            Bitmap bitmap = new Bitmap(this.sourceImage.Width, this.sourceImage.Height);
+            bitmap = (Bitmap)this.imageToEdit.Clone();
+            ReadyImage.Source = ImageSourceFromBitmap(Algorithm.MidGrey(bitmap));
         }
 
         private void LuWu_Click(object sender, RoutedEventArgs e)
         {
-
+            if (sourceImage == null)
+            {
+                MessageBox.Show("You haven't uploaded any files", "Image error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            Bitmap bitmap = new Bitmap(this.sourceImage.Width, this.sourceImage.Height);
+            bitmap = (Bitmap)this.imageToEdit.Clone();
+            ReadyImage.Source = ImageSourceFromBitmap(Algorithm.Median(bitmap));
         }
 
         private void Bernsen_Click(object sender, RoutedEventArgs e)

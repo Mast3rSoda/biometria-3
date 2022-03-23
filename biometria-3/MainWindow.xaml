@@ -38,11 +38,11 @@
                     <Button Grid.Row="0" Grid.Column="0" Name="Niblack" Content="Niblack" Click="Niblack_Click" Margin="3"/>
                     <Button Grid.Row="0" Grid.Column="1" Name="Sauvola" Content="Sauvola" Click="Sauvola_Click" Margin="3"/>
                     <Button Grid.Row="1" Grid.Column="0" Name="Phansalkar" Content="Phansalkar" Click="Phansalkar_Click" Margin="3"/>
-                    <Button Grid.Row="1" Grid.Column="1" Name="Kapur" Content="Kapur" Click="Kapur_Click" Margin="3"/>
-                    <Button Grid.Row="2" Grid.Column="0" Name="LuWu" Content="lUwU" Click="LuWu_Click" Margin="3"/>
+                    <Button Grid.Row="1" Grid.Column="1" Name="Kapur" Content="MidGrey" Click="Kapur_Click" Margin="3"/>
+                    <Button Grid.Row="2" Grid.Column="0" Name="LuWu" Content="Median" Click="LuWu_Click" Margin="3"/>
                     <Button Grid.Row="2" Grid.Column="1" Name="Bernsen" Content="Bernsen" Click="Bernsen_Click" Margin="3"/>
-                    <Label Grid.Row="3" Grid.Column="0" Content="Range:" VerticalAlignment="Top"/>
-                    <Slider Grid.Row="3" Grid.Column="0" Name="Range" Minimum="1" Maximum="5" IsSnapToTickEnabled="True" Margin="3" VerticalAlignment="Bottom"/>
+                    <Label Grid.Row="3" Grid.Column="0" Content="Const val:" VerticalAlignment="Top"/>
+                    <Slider Grid.Row="3" Grid.Column="0" Name="Range" Minimum="0" Maximum="20" IsSnapToTickEnabled="True" Margin="3" VerticalAlignment="Bottom" TickPlacement="None" Value="11" LargeChange="1"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="Limit:" VerticalAlignment="Top"/>
                     <Slider Grid.Row="3" Grid.Column="1" Name="Limit" Minimum="0" Maximum="255" Margin="3" VerticalAlignment="Bottom"/>
                 </Grid>
