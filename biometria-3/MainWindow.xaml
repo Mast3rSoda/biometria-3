@@ -44,7 +44,7 @@
                     <Label Grid.Row="3" Grid.Column="0" Content="Const val:" VerticalAlignment="Top"/>
                     <Slider Grid.Row="3" Grid.Column="0" Name="Range" Minimum="0" Maximum="20" IsSnapToTickEnabled="True" Margin="3" VerticalAlignment="Bottom" TickPlacement="None" Value="11" LargeChange="1"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="Limit:" VerticalAlignment="Top"/>
-                    <Slider Grid.Row="3" Grid.Column="1" Name="Limit" Minimum="0" Maximum="255" Margin="3" VerticalAlignment="Bottom"/>
+                    <Slider Grid.Row="3" Grid.Column="1" Name="Limit" Minimum="0" Maximum="255" Margin="3" VerticalAlignment="Bottom" ValueChanged="Limit_ValueChanged"/>
                 </Grid>
             </Grid>
         </Grid>

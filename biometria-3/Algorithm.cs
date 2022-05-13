@@ -20,6 +20,7 @@ namespace biometria_3
                 for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
                     byte[,] localArray;
+                    #region don't look
                     if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
                         localArray = new byte[5, 5] {
                      { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
@@ -96,7 +97,7 @@ namespace biometria_3
                      { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
                     };
                     }
-                    // ja pierdolę
+                    #endregion
                     IEnumerable<byte> allValues = localArray.Cast<byte>();
                     int min = (int)allValues.Min();
                     int max = (int)allValues.Max();
@@ -159,6 +160,7 @@ namespace biometria_3
                 for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
                     byte[,] localArray;
+                    #region don't look
                     if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
                         localArray = new byte[5, 5] {
                      { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
@@ -235,7 +237,7 @@ namespace biometria_3
                      { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
                     };
                     }
-                    // ja pierdolę
+                    #endregion
                     IEnumerable<byte> allValues = localArray.Cast<byte>();
                     int min = (int)allValues.Min();
                     int max = (int)allValues.Max();
@@ -269,6 +271,7 @@ namespace biometria_3
                 for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
                     byte[,] localArray;
+                    #region don't look
                     if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
                         localArray = new byte[5, 5] {
                      { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
@@ -345,7 +348,7 @@ namespace biometria_3
                      { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
                     };
                     }
-                    // ja pierdolę
+                    #endregion
                     IEnumerable<byte> allValues = localArray.Cast<byte>();
                     int min = (int)allValues.Min();
                     int max = (int)allValues.Max();
@@ -378,6 +381,7 @@ namespace biometria_3
                 for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
                     byte[,] localArray;
+                    #region don't look
                     if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
                         localArray = new byte[5, 5] {
                      { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
@@ -454,7 +458,7 @@ namespace biometria_3
                      { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
                     };
                     }
-                    // ja pierdolę
+                    #endregion
                     IEnumerable<byte> allValues = localArray.Cast<byte>();
                     var vals = allValues.ToList();
                     vals.Sort();
@@ -488,6 +492,7 @@ namespace biometria_3
                 for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
                     byte[,] localArray;
+                    #region don't look
                     if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
                         localArray = new byte[5, 5] {
                      { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
@@ -564,7 +569,7 @@ namespace biometria_3
                      { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
                     };
                     }
-                    // ja pierdolę
+                    #endregion
                     IEnumerable<byte> allValues = localArray.Cast<byte>();
                     int min = (int)allValues.Min();
                     int max = (int)allValues.Max();
@@ -599,6 +604,7 @@ namespace biometria_3
                 for (int j = 0; j < grayImage.GetLength(1); j++)
                 {
                     byte[,] localArray;
+                    #region don't look
                     if (i > 1 && i < grayImage.GetLength(0) - 2 && j > 1 && j < grayImage.GetLength(1) - 3)
                         localArray = new byte[5, 5] {
                      { grayImage[i - 2, j - 2], grayImage[i - 2, j - 1], grayImage[i - 2, j], grayImage[i - 2, j + 1], grayImage[i - 2, j + 2] },
@@ -675,7 +681,7 @@ namespace biometria_3
                      { grayImage[i , j - 2], grayImage[i, j - 1], grayImage[i, j], grayImage[i, j + 1], grayImage[i, j+ 2] },
                     };
                     }
-                    // ja pierdolę
+                    #endregion
                     IEnumerable<byte> allValues = localArray.Cast<byte>();
                     int min = (int)allValues.Min();
                     int max = (int)allValues.Max();
@@ -698,7 +704,6 @@ namespace biometria_3
                 }
 
             }
-
 
 
             return bmp;

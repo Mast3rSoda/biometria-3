@@ -129,5 +129,9 @@ namespace biometria_3
             ReadyImage.Source = ImageSourceFromBitmap(Algorithm.Bernsen(bitmap, (int)Range.Value, (int)Limit.Value));
 
         }
+
+        private void Limit_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+        }
     }
 }
